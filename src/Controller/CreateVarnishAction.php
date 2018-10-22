@@ -8,6 +8,10 @@ use Snowdog\DevTest\Model\VarnishManager;
 class CreateVarnishAction
 {
     /**
+     * @var UserManager
+     */
+    private $userManager;
+    /**
      * @var VarnishManager
      */
     private $varnishManager;
@@ -22,7 +26,14 @@ class CreateVarnishAction
     {
         $ip = $_POST['ip'];
 
-        // TODO - add module logic here
+        if (isset($_SESSION['login'])) {
+            $user = $this->userManager->getByLogin($_SESSION['login']);
+            if($user){
+                if($this->varnishManager->create($user, $ip)){
+                    $_SESSION['flash'] = 'Varnish added! IP : '.$ip;
+                }
+            }
+        }
 
         header('Location: /varnish');
     }

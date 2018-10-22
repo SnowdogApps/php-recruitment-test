@@ -54,10 +54,7 @@ class VarnishesAction
     public function getAssignedWebsiteIds(Varnish $varnish)
     {
         $websites = $this->varnishManager->getWebsites($varnish);
-        $ids = [];
-        foreach($websites as $website) {
-            $ids[] = $website->getWebsiteId();
-        }
+        $ids = array_map(function ($website){ return $website->getWebsiteId(); }, $websites);
         return $ids;
     }
 

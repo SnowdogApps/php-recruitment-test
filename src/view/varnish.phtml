@@ -11,9 +11,12 @@
     <title>Varnishes - Cache Warmer</title>
 
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="/css/style.css" rel="stylesheet">
+
+    <script src="/js/head.load.min.js"></script>
 </head>
 
 <body>
@@ -30,23 +33,22 @@
     <div>
 
         <div class="padded">
-            <form class="form-inline" method="post" action="/varnish">
+            <h1>Varnish Assignments</h1>
+        </div>
+
+        <div class="padded">
+            <form id="create_form" class="form-inline" method="post" action="/varnish">
                 <div class="form-group">
                     <label for="exampleInputName2">IP</label>
-                    <input type="text" name="ip" class="form-control" id="exampleInputName2"
-                           placeholder="192.168.0.1">
+                    <input type="text" name="ip" class="form-control" id="exampleInputName2" placeholder="192.168.0.1">
                 </div>
                 <button type="submit" class="btn btn-primary">Add Varnish</button>
             </form>
         </div>
 
-        <div class="padded">
-            <h1>Varnish Assignments</h1>
-        </div>
-
         <?php foreach ($this->getVarnishes() as $varnish): /** @var \Snowdog\DevTest\Model\Varnish $varnish */ ?>
-            <?php $websiteIds = $this->getAssignedWebsiteIds($varnish) ?>
-            <h2><?= $varnish->getIP() ?></h2>
+            <?php $websiteIds = $this->getAssignedWebsiteIds($varnish); ?>
+            <h2><?= $varnish->getIp() ?></h2>
 
             <div class="padded">
                 <table class="table table-striped">
@@ -57,7 +59,15 @@
                     </tr>
                     <?php foreach ($this->getWebsites() as $website): /** @var \Snowdog\DevTest\Model\Website $website */ ?>
                         <tr>
-                            <td><input type="checkbox" <?= in_array($website->getWebsiteId(), $websiteIds) ? 'checked="checked"' : '' ?>/></td>
+                            <td>
+                                <input
+                                    type="checkbox"
+                                    class="varnish-website-relation"
+                                    data-varnish_id="<?= $varnish->getId() ?>"
+                                    data-website_id="<?= $website->getWebsiteId() ?>"
+                                    <?= in_array($website->getWebsiteId(), $websiteIds) ? 'checked="checked"' : '' ?>
+                                />
+                            </td>
                             <td><?= $website->getName() ?></td>
                             <td><?= $website->getHostname() ?></td>
                         </tr>
@@ -70,6 +80,13 @@
 
 </div><!-- /.container -->
 
+<script>
+    head.load([
+        "/js/jquery-3.3.1.min.js",
+        '/plugins/toastr/toastr.min.js',
+        '/js/varnish.js',
+    ]);
+</script>
 
 </body>
 </html>
