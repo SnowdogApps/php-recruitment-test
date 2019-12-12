@@ -2,6 +2,9 @@
 
 namespace Snowdog\DevTest\Command;
 
+use Lib\CacheWarmer\Actor;
+use Lib\CacheWarmer\Resolver;
+use Lib\CacheWarmer\Warmer;
 use Snowdog\DevTest\Model\PageManager;
 use Snowdog\DevTest\Model\WebsiteManager;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -29,12 +32,12 @@ class WarmCommand
         if ($website) {
             $pages = $this->pageManager->getAllByWebsite($website);
 
-            $resolver = new \Old_Legacy_CacheWarmer_Resolver_Method();
-            $actor = new \Old_Legacy_CacheWarmer_Actor();
+            $resolver = new Resolver();
+            $actor = new Actor();
             $actor->setActor(function ($hostname, $ip, $url) use ($output) {
                 $output->writeln('Visited <info>http://' . $hostname . '/' . $url . '</info> via IP: <comment>' . $ip . '</comment>');
             });
-            $warmer = new \Old_Legacy_CacheWarmer_Warmer();
+            $warmer = new Warmer();
             $warmer->setResolver($resolver);
             $warmer->setHostname($website->getHostname());
             $warmer->setActor($actor);
